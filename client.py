@@ -184,6 +184,13 @@ def sample_queries():
                 {"action": "query",
                 "data": {
                     "query_db": "file_logs",
+                    "filter": {},
+                    "update_start_time": 1620000000,
+                    "update_end_time": 1630000000
+                }},
+                {"action": "query",
+                "data": {
+                    "query_db": "file_logs",
                     "filter": {"_id":2},
                 }},
                 {"action": "query",
@@ -210,6 +217,16 @@ def sample_queries():
                     "start_time":1600000005,
                     "end_time":1690350000
                 }},
+                {"action": "query",
+                "data": {
+                    "query_db": "event_logs",
+                    "filter": {"user":"unsuspecting_user"}
+                }},
+                {"action": "query",
+                "data": {
+                    "query_db": "event_logs",
+                    "filter": {"event_type":"server_task"}
+                }},
                ]
     for i,q in enumerate(queries):
         with open(f"query{i}.json","w") as f:
@@ -217,5 +234,5 @@ def sample_queries():
         input("enter for next")
 
 if __name__ == "__main__":
-    populate_with_samples()
+    #populate_with_samples()
     sample_queries()
