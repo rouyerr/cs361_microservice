@@ -4,6 +4,7 @@ import threading
 import json
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import argparse
 
 def log_event(db, event_data_org):
 
@@ -99,21 +100,23 @@ def recv_json(client_socket):
         if not data:
             break
         buffer += data
-        if b'\u0004' in buffer:
+        if b'\x04' in buffer:
             break
-    msg_json = buffer[:-6].decode('utf-8').strip()
+    msg_json = buffer[:-1].decode('utf-8').strip()
     msg_dict = json.loads(msg_json)
     return msg_dict
 
 def send_json(sock, msg_dict):
     msg_dict = serialize_dict(msg_dict)
     msg_json = json.dumps(msg_dict)
-    msg_bytes = msg_json.encode('utf-8') + b'\u0004'
+    msg_bytes = msg_json.encode('utf-8') + b'\x04'
     sock.sendall(msg_bytes)
 
 def handle_client(client_socket, address, db):
     print(f"Connected to {address}")
-    
+    init_mesg = {"code":200,
+                        "message":f"Connection established. Ready for query or log."}
+    send_json(client_socket, init_mesg)
     request = recv_json(client_socket)
     if not request:
         response = {"code":400,
@@ -136,8 +139,8 @@ def handle_client(client_socket, address, db):
     client_socket.close()
     print(f"Connection closed for {address}")
 
-def start_server(host='127.0.0.1', port=9942):
-    clientdb = MongoClient("mongodb://localhost:27017/")
+def start_server(host='127.0.0.1', port=9942, mongodb_client = "mongodb://localhost:27017/"):
+    clientdb = MongoClient(mongodb_client)
     db = clientdb["file_server_db"]
     
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -151,4 +154,12 @@ def start_server(host='127.0.0.1', port=9942):
         thread.start()
 
 if __name__ == "__main__":
-    start_server()
+    parser = argparse.ArgumentParser(description="Start the server.")
+    
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="The host IP address to bind the server (default: 127.0.0.1)")
+    parser.add_argument("--port", type=int, default=9942, help="The port number to bind the server (default: 9942)")
+    parser.add_argument("--mongodb_client", type=str, default="mongodb://localhost:27017/", help="The MongoDB client connection string (default: mongodb://localhost:27017/)")
+    args = parser.parse_args()
+
+    # Start server with provided arguments
+    start_server(args.host, args.port, args.mongodb_client)

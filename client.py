@@ -1,9 +1,10 @@
 import socket
 import json
+import argparse
 
 def send_json(sock, msg_dict):
     msg_json = json.dumps(msg_dict)
-    msg_bytes = msg_json.encode('utf-8') + b'\u0004'
+    msg_bytes = msg_json.encode('utf-8') + b'\x04'
     sock.sendall(msg_bytes)
 
 def recv_json(server_socket):
@@ -13,15 +14,16 @@ def recv_json(server_socket):
         if not data:
             break
         buffer += data
-        if b'\u0004' in buffer:
+        if b'\x04' in buffer:
             break
-    msg_json = buffer[:-6].decode('utf-8').strip()
+    msg_json = buffer[:-1].decode('utf-8').strip()
     msg_dict = json.loads(msg_json)
     return msg_dict
 
 def send_recv(host='127.0.0.1', port=9942, request=None):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_sock:
         server_sock.connect((host, port))
+        print(recv_json(server_sock))
         print(request)
         send_json(server_sock, request)
         response = recv_json(server_sock)
