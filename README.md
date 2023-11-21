@@ -1,16 +1,28 @@
 # cs361_microservice
 A logging microservice for a file server
+Supports logging and querying
 By: Remy Rouyer
 
-#Requirements
-install of mongoDb running locally on the machine
+# Requirements
+install of [mongoDb](https://www.mongodb.com/try/download/community)
 
-#Dependencies
+# Dependencies
 pip install pymongo
 
+## Starting up server
+For now supports local mongoDB instances
+Run your MongoDB instance. No need to change any configs or inititialize anything.
+run LoggingMicroservice.py by calling
 
-The client.py shows an example of how to send and recieve from the server.
-Supports logging and querying
+            python .\LoggingMicroservice.py [--host host] [--port port] [--mongodb_client]
+The args are optional and have defaults:
+Host arg is host IP address to bind the server (default: 127.0.0.1)
+Port arg is the port number to bind the server (default: 9942)
+Mongodb_client arg is the MongoDB client connection string (default: mongodb://localhost:27017/)
+
+## How to request data
+![alt text](https://github.com/rouyerr/cs361_microservice/blob/main/uml.png?raw=true)
+The client.py shows an example of how to send and recieve log and query requests from the server.
 Logging is achieved by sending a json object in the form
 
             {"action":"log",
