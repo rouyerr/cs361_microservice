@@ -16,9 +16,9 @@ run LoggingMicroservice.py by calling
 
             python .\LoggingMicroservice.py [--host host] [--port port] [--mongodb_client]
 The args are optional and have defaults:
-Host arg is host IP address to bind the server (default: 127.0.0.1)
-Port arg is the port number to bind the server (default: 9942)
-Mongodb_client arg is the MongoDB client connection string (default: mongodb://localhost:27017/)
+* Host arg is host IP address to bind the server (default: 127.0.0.1)
+* Port arg is the port number to bind the server (default: 9942)
+* Mongodb_client arg is the MongoDB client connection string (default: mongodb://localhost:27017/)
 
 ## How to request data
 ![alt text](https://github.com/rouyerr/cs361_microservice/blob/main/uml.png?raw=true)
