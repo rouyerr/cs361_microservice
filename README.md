@@ -2,7 +2,7 @@
 A logging microservice for a file server
 Supports logging and querying
 By: Remy Rouyer
-
+[video](https://youtu.be/gkbwhYxPiL4)
 # Requirements
 install of [mongoDb](https://www.mongodb.com/try/download/community)
 
@@ -122,9 +122,62 @@ Likewise for event logs there are start_time and end_time...
 
       {"action": "query",
         "data": {
-                "query_db": "file_logs",
+                "query_db": "event_logs",
                 "filter": {},
                 "limit": int
                 start_time": int,
                 end_time": int
                 }}
+Response from logging service from a query will be in the form:
+
+            {"data": [{},{}], #list of matching query json objects
+              "recieved": {} # json object of query recieved and fulfiled by server
+              }
+            }
+
+
+
+example Response :
+
+            {"data": [
+                {
+                  "_id": 2,
+                  "file_name": "constitutionV2.txt",
+                  "file_type": "txt",
+                  "file_size": "10099",
+                  "status": "live",
+                  "time_created": 1610000000,
+                  "last_modified": 1620000000,
+                  "downloads": 1,
+                  "file_owner": "george",
+                  "access_log": [
+                    {
+                      "_id": "655c52925848071f505ab29a",
+                      "file_id": 2,
+                      "time": 1650000000,
+                      "user": "arnold",
+                      "event_type": "download"
+                    }
+                  ],
+                  "update_log": [
+                    {
+                      "_id": "655c52905848071f505ab296",
+                      "file_id": 2,
+                      "time": 1620000000,
+                      "file_name": "constitutionV2.txt",
+                      "file_type": "txt",
+                      "file_size": "10099",
+                      "user": "george",
+                      "event_type": "update"
+                    }
+                  ]
+                }
+              ],
+              "recieved": {
+                "action": "query",
+                "data": {
+                  "query_db": "file_logs",
+                  "filter": { "_id": 2 }
+                }
+              }
+            }
