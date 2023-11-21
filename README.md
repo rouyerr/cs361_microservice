@@ -23,6 +23,37 @@ The args are optional and have defaults:
 ## How to request data
 ![alt text](https://github.com/rouyerr/cs361_microservice/blob/main/uml.png?raw=true)
 The client.py shows an example of how to send and recieve log and query requests from the server.
+Example Socket connection in python:
+
+            def send_json(socket, msg_dict):
+                msg_json = json.dumps(msg_dict)
+                msg_bytes = msg_json.encode('utf-8') + b'\x04'
+                socket.sendall(msg_bytes)
+
+            def recv_json(server_socket):
+                buffer = b""
+                while True:
+                    data = server_socket.recv(1024)
+                    if not data:
+                        break
+                    buffer += data
+                    if b'\x04' in buffer:
+                        break
+                msg_json = buffer[:-1].decode('utf-8').strip()
+                msg_dict = json.loads(msg_json)
+                return msg_dict
+
+            def send_recv(host='127.0.0.1', port=9942, request=None):
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+                    server_socket.connect((host, port))
+                    print(recv_json(server_socket))
+                    print(f"Request being sent to server: {request}")
+                    send_json(server_socket, request)
+                    response = recv_json(server_socket)
+                    print(f"Server's response: {response}")
+                    return response
+
+
 Logging is achieved by sending a json object in the form
 
             {"action":"log",
